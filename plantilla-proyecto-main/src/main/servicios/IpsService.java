@@ -1,6 +1,6 @@
 package services;
 
-import modelo.Ips;
+import model.Ips;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repositories.IpsRepository;
@@ -8,6 +8,9 @@ import repositories.IpsRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio para manejar la lógica de negocio de Ips.
+ */
 @Service
 public class IpsService {
 
@@ -23,6 +26,9 @@ public class IpsService {
     }
 
     public Ips guardarIps(Ips ips) {
+        if (ips.getNombre() == null || ips.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la IPS no puede ser nulo o vacío.");
+        }
         return ipsRepository.save(ips);
     }
 

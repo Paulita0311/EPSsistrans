@@ -1,21 +1,18 @@
-package co.edu.uniandes.dse.olimpiadasandinas.services;
+package services;
+
+import model.Medico;
+import model.Especialidad;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import repositories.MedicoRepository;
+import repositories.EspecialidadRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import co.edu.uniandes.dse.olimpiadasandinas.entities.Medico;
-import co.edu.uniandes.dse.olimpiadasandinas.entities.Especialidad;
-import co.edu.uniandes.dse.olimpiadasandinas.exceptions.EntityNotFoundException;
-import co.edu.uniandes.dse.olimpiadasandinas.exceptions.IllegalOperationException;
-import co.edu.uniandes.dse.olimpiadasandinas.repositories.MedicoRepository;
-import co.edu.uniandes.dse.olimpiadasandinas.repositories.EspecialidadRepository;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+/**
+ * Servicio para manejar la lógica de negocio de Medico.
+ */
 @Service
 public class MedicoService {
 
@@ -25,64 +22,55 @@ public class MedicoService {
     @Autowired
     private EspecialidadRepository especialidadRepository;
 
-    @Transactional
-    public Medico createMedico(Medico medico) throws IllegalOperationException {
-        log.info("Inicia proceso de creación de Médico");
+    public Medico crearMedico(Medico medico) {
         if (medico.getNombre() == null || medico.getNombre().trim().isEmpty()) {
-            throw new IllegalOperationException("El nombre del médico no puede ser vacío");
+            throw new IllegalArgumentException("El nombre del médico no puede ser vacío");
         }
-        // Validar si hay especialidad
+        // Validar especialidad si viene
         if (medico.getEspecialidad() != null) {
             Optional<Especialidad> op = especialidadRepository.findById(medico.getEspecialidad().getId());
             if (op.isEmpty()) {
-                throw new IllegalOperationException("La especialidad no existe");
+                throw new IllegalArgumentException("La especialidad con ese id no existe");
             }
             medico.setEspecialidad(op.get());
         }
         return medicoRepository.save(medico);
     }
 
-    @Transactional
-    public List<Medico> getMedicos() {
+    public List<Medico> listarMedicos() {
         return medicoRepository.findAll();
     }
 
-    @Transactional
-    public Medico getMedico(Long id) throws EntityNotFoundException {
+    public Medico obtenerMedico(Long id) {
         Optional<Medico> op = medicoRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new EntityNotFoundException("Médico no encontrado");
-        }
-        return op.get();
+        return op.orElse(null);
     }
 
-    @Transactional
-    public Medico updateMedico(Long id, Medico medico)
-            throws EntityNotFoundException, IllegalOperationException {
-        Medico old = getMedico(id);
+    public Medico actualizarMedico(Long id, Medico medico) {
+        Medico old = obtenerMedico(id);
+        if (old == null) {
+            throw new IllegalArgumentException("No existe el médico con id=" + id);
+        }
         if (medico.getNombre() == null || medico.getNombre().trim().isEmpty()) {
-            throw new IllegalOperationException("Nombre inválido");
+            throw new IllegalArgumentException("Nombre inválido");
         }
         old.setNombre(medico.getNombre());
         old.setTipoDocumento(medico.getTipoDocumento());
         old.setNumeroDocumento(medico.getNumeroDocumento());
-
+        // Actualizar especialidad
         if (medico.getEspecialidad() != null) {
             Optional<Especialidad> op = especialidadRepository.findById(medico.getEspecialidad().getId());
             if (op.isEmpty()) {
-                throw new IllegalOperationException("Especialidad no existe");
+                throw new IllegalArgumentException("Especialidad no existe");
             }
             old.setEspecialidad(op.get());
         } else {
             old.setEspecialidad(null);
         }
-
         return medicoRepository.save(old);
     }
 
-    @Transactional
-    public void deleteMedico(Long id) throws EntityNotFoundException {
-        Medico old = getMedico(id);
-        medicoRepository.delete(old);
+    public void eliminarMedico(Long id) {
+        medicoRepository.deleteById(id);
     }
 }

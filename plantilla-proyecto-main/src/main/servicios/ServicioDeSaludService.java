@@ -1,6 +1,6 @@
 package services;
 
-import modelo.ServicioDeSalud;
+import model.ServicioDeSalud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repositories.ServicioDeSaludRepository;
@@ -8,6 +8,9 @@ import repositories.ServicioDeSaludRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio para manejar la lógica de negocio de ServicioDeSalud.
+ */
 @Service
 public class ServicioDeSaludService {
 
@@ -23,6 +26,9 @@ public class ServicioDeSaludService {
     }
 
     public ServicioDeSalud guardarServicio(ServicioDeSalud servicio) {
+        if (servicio.getNombreServicio() == null || servicio.getNombreServicio().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del servicio no puede ser nulo o vacío.");
+        }
         return servicioRepository.save(servicio);
     }
 

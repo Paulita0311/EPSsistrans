@@ -1,22 +1,20 @@
-package co.edu.uniandes.dse.olimpiadasandinas.services;
+package services;
+
+import model.OrdenDeServicio;
+import model.Afiliado;
+import model.Medico;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import repositories.OrdenDeServicioRepository;
+import repositories.AfiliadoRepository;
+import repositories.MedicoRepository;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import co.edu.uniandes.dse.olimpiadasandinas.entities.OrdenDeServicio;
-import co.edu.uniandes.dse.olimpiadasandinas.entities.Afiliado;
-import co.edu.uniandes.dse.olimpiadasandinas.entities.Medico;
-import co.edu.uniandes.dse.olimpiadasandinas.exceptions.EntityNotFoundException;
-import co.edu.uniandes.dse.olimpiadasandinas.exceptions.IllegalOperationException;
-import co.edu.uniandes.dse.olimpiadasandinas.repositories.OrdenDeServicioRepository;
-import co.edu.uniandes.dse.olimpiadasandinas.repositories.AfiliadoRepository;
-import co.edu.uniandes.dse.olimpiadasandinas.repositories.MedicoRepository;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+/**
+ * Servicio para manejar la lógica de negocio de OrdenDeServicio.
+ */
 @Service
 public class OrdenDeServicioService {
 
@@ -29,84 +27,72 @@ public class OrdenDeServicioService {
     @Autowired
     private MedicoRepository medicoRepository;
 
-    @Transactional
-    public OrdenDeServicio createOrdenDeServicio(OrdenDeServicio orden) throws IllegalOperationException {
-        log.info("Inicia creación de OrdenDeServicio");
+    public OrdenDeServicio crearOrdenDeServicio(OrdenDeServicio orden) {
         if (orden.getFechaEmision() == null) {
-            throw new IllegalOperationException("La fecha de emisión no puede ser nula");
+            throw new IllegalArgumentException("La fecha de emisión no puede ser nula");
         }
-       
+        // Validar afiliado
         if (orden.getAfiliado() != null) {
-            Optional<Afiliado> afiOp = afiliadoRepository.findById(orden.getAfiliado().getId());
-            if (afiOp.isEmpty()) {
-                throw new IllegalOperationException("Afiliado no existe");
+            Optional<Afiliado> afi = afiliadoRepository.findById(orden.getAfiliado().getId());
+            if (afi.isEmpty()) {
+                throw new IllegalArgumentException("El afiliado no existe");
             }
-            orden.setAfiliado(afiOp.get());
+            orden.setAfiliado(afi.get());
         }
-      
+        // Validar médico
         if (orden.getMedico() != null) {
-            Optional<Medico> medOp = medicoRepository.findById(orden.getMedico().getId());
-            if (medOp.isEmpty()) {
-                throw new IllegalOperationException("Médico no existe");
+            Optional<Medico> med = medicoRepository.findById(orden.getMedico().getId());
+            if (med.isEmpty()) {
+                throw new IllegalArgumentException("El médico no existe");
             }
-            orden.setMedico(medOp.get());
+            orden.setMedico(med.get());
         }
-        
-
         return ordenRepository.save(orden);
     }
 
-    @Transactional
-    public List<OrdenDeServicio> getOrdenesDeServicio() {
+    public List<OrdenDeServicio> listarOrdenes() {
         return ordenRepository.findAll();
     }
 
-    @Transactional
-    public OrdenDeServicio getOrdenDeServicio(Long id) throws EntityNotFoundException {
+    public OrdenDeServicio obtenerOrden(Long id) {
         Optional<OrdenDeServicio> op = ordenRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new EntityNotFoundException("Orden de servicio no encontrada");
-        }
-        return op.get();
+        return op.orElse(null);
     }
 
-    @Transactional
-    public OrdenDeServicio updateOrdenDeServicio(Long id, OrdenDeServicio nueva)
-            throws EntityNotFoundException, IllegalOperationException {
-        OrdenDeServicio old = getOrdenDeServicio(id);
+    public OrdenDeServicio actualizarOrden(Long id, OrdenDeServicio nueva) {
+        OrdenDeServicio old = obtenerOrden(id);
+        if (old == null) {
+            throw new IllegalArgumentException("No existe la orden con id=" + id);
+        }
         if (nueva.getFechaEmision() == null) {
-            throw new IllegalOperationException("Fecha emisión inválida");
+            throw new IllegalArgumentException("Fecha de emisión inválida");
         }
         old.setFechaEmision(nueva.getFechaEmision());
         old.setEstado(nueva.getEstado());
-
-       
+        // Afiliado
         if (nueva.getAfiliado() != null) {
-            Optional<Afiliado> afiOp = afiliadoRepository.findById(nueva.getAfiliado().getId());
-            if (afiOp.isEmpty()) {
-                throw new IllegalOperationException("Afiliado no existe");
+            Optional<Afiliado> afi = afiliadoRepository.findById(nueva.getAfiliado().getId());
+            if (afi.isEmpty()) {
+                throw new IllegalArgumentException("Afiliado no existe");
             }
-            old.setAfiliado(afiOp.get());
+            old.setAfiliado(afi.get());
         } else {
             old.setAfiliado(null);
         }
-     
+        // Médico
         if (nueva.getMedico() != null) {
-            Optional<Medico> medOp = medicoRepository.findById(nueva.getMedico().getId());
-            if (medOp.isEmpty()) {
-                throw new IllegalOperationException("Médico no existe");
+            Optional<Medico> med = medicoRepository.findById(nueva.getMedico().getId());
+            if (med.isEmpty()) {
+                throw new IllegalArgumentException("Médico no existe");
             }
-            old.setMedico(medOp.get());
+            old.setMedico(med.get());
         } else {
             old.setMedico(null);
         }
-
         return ordenRepository.save(old);
     }
 
-    @Transactional
-    public void deleteOrdenDeServicio(Long id) throws EntityNotFoundException {
-        OrdenDeServicio old = getOrdenDeServicio(id);
-        ordenRepository.delete(old);
+    public void eliminarOrden(Long id) {
+        ordenRepository.deleteById(id);
     }
 }

@@ -1,6 +1,6 @@
 package services;
 
-import modelo.Cita;
+import model.Cita;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repositories.CitaRepository;
@@ -8,6 +8,9 @@ import repositories.CitaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio para manejar la lógica de negocio de Cita.
+ */
 @Service
 public class CitaService {
 
@@ -23,6 +26,9 @@ public class CitaService {
     }
 
     public Cita guardarCita(Cita cita) {
+        if (cita.getFecha() == null) {
+            throw new IllegalArgumentException("La fecha de la cita no puede ser nula.");
+        }
         return citaRepository.save(cita);
     }
 

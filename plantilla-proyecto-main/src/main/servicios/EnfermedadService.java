@@ -1,54 +1,45 @@
-package co.edu.uniandes.dse.olimpiadasandinas.services;
+package services;
+
+import model.Enfermedad;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import repositories.EnfermedadRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import co.edu.uniandes.dse.olimpiadasandinas.entities.Enfermedad;
-import co.edu.uniandes.dse.olimpiadasandinas.exceptions.EntityNotFoundException;
-import co.edu.uniandes.dse.olimpiadasandinas.exceptions.IllegalOperationException;
-import co.edu.uniandes.dse.olimpiadasandinas.repositories.EnfermedadRepository;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+/**
+ * Servicio para manejar la lógica de negocio de Enfermedad.
+ */
 @Service
 public class EnfermedadService {
 
     @Autowired
     private EnfermedadRepository enfermedadRepository;
 
-    @Transactional
-    public Enfermedad createEnfermedad(Enfermedad enfermedad) throws IllegalOperationException {
-        log.info("Inicia creación de Enfermedad");
+    public Enfermedad crearEnfermedad(Enfermedad enfermedad) {
         if (enfermedad.getNombreEnfermedad() == null || enfermedad.getNombreEnfermedad().trim().isEmpty()) {
-            throw new IllegalOperationException("El nombre de la enfermedad no puede ser vacío.");
+            throw new IllegalArgumentException("El nombre de la enfermedad no puede ser vacío.");
         }
         return enfermedadRepository.save(enfermedad);
     }
 
-    @Transactional
-    public List<Enfermedad> getEnfermedades() {
+    public List<Enfermedad> listarEnfermedades() {
         return enfermedadRepository.findAll();
     }
 
-    @Transactional
-    public Enfermedad getEnfermedad(Long id) throws EntityNotFoundException {
+    public Enfermedad obtenerEnfermedad(Long id) {
         Optional<Enfermedad> op = enfermedadRepository.findById(id);
-        if (op.isEmpty()) {
-            throw new EntityNotFoundException("Enfermedad no encontrada");
-        }
-        return op.get();
+        return op.orElse(null);
     }
 
-    @Transactional
-    public Enfermedad updateEnfermedad(Long id, Enfermedad enfermedad)
-            throws EntityNotFoundException, IllegalOperationException {
-        Enfermedad old = getEnfermedad(id);
+    public Enfermedad actualizarEnfermedad(Long id, Enfermedad enfermedad) {
+        Enfermedad old = obtenerEnfermedad(id);
+        if (old == null) {
+            throw new IllegalArgumentException("No existe una enfermedad con id=" + id);
+        }
         if (enfermedad.getNombreEnfermedad() == null || enfermedad.getNombreEnfermedad().trim().isEmpty()) {
-            throw new IllegalOperationException("Nombre inválido");
+            throw new IllegalArgumentException("Nombre inválido");
         }
         old.setNombreEnfermedad(enfermedad.getNombreEnfermedad());
         old.setDescripcion(enfermedad.getDescripcion());
@@ -56,9 +47,7 @@ public class EnfermedadService {
         return enfermedadRepository.save(old);
     }
 
-    @Transactional
-    public void deleteEnfermedad(Long id) throws EntityNotFoundException {
-        Enfermedad old = getEnfermedad(id);
-        enfermedadRepository.delete(old);
+    public void eliminarEnfermedad(Long id) {
+        enfermedadRepository.deleteById(id);
     }
 }

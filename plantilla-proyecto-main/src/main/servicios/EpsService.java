@@ -1,6 +1,6 @@
 package services;
 
-import modelo.Eps;
+import model.Eps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repositories.EpsRepository;
@@ -8,6 +8,9 @@ import repositories.EpsRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio para manejar la lógica de negocio de Eps.
+ */
 @Service
 public class EpsService {
 
@@ -23,6 +26,9 @@ public class EpsService {
     }
 
     public Eps guardarEps(Eps eps) {
+        if (eps.getNombre() == null || eps.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la EPS no puede ser nulo o vacío.");
+        }
         return epsRepository.save(eps);
     }
 
