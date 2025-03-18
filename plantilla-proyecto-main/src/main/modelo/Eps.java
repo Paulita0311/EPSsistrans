@@ -1,58 +1,25 @@
+package modelo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+import java.util.List;
 
 @Entity
-@Table(name = eps)
+@Table(name = "EPS")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Eps {
-    @Id
-    @GenerateValue(strategy = Generationtype.AUTO)
 
-    private integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer idEPS;
+
     private String nombre;
     private String direccion;
-    private int telefono;
+    private Integer telefono;
 
-    public Eps(String nombre, String direccion, int telefono) {
-        this.nombre = nombre;
-        this.ciudad = ciudad;
-        this.presupuesto = presupuesto;
-    }
-
-    public eps ()
-    {;}
-
-    public integer getId() {
-        return id;
-    }
-
-    public void setId(integer id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public int getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(int telefono) {
-        this.telefono = telefono;
-    }
-    //Prueba
+    // Relación con Afiliados (Una EPS tiene muchos afiliados)
+    @OneToMany(mappedBy = "eps", cascade = CascadeType.ALL)
+    private List<Afiliado> afiliados;
 }
