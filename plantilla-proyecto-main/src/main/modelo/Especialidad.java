@@ -1,15 +1,47 @@
-package co.edu.uniandes.dse.olimpiadasandinas.entities;
+package modelo;
 
 import jakarta.persistence.Entity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-
-@Data
 @Entity
-@EqualsAndHashCode(callSuper = true)
-public class Especialidad extends BaseEntity {
+@Table(name="ESPECIALIDAD")
+public class Especialidad {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
     private String nombre;
-    private String descripcion;
+
+    public Especialidad() {
+        // Constructor por defecto
+    }
+
+    public Especialidad(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNombre(){
+        return nombre;
+    }
+
+    public void setNombre(String nombre){
+        this.nombre = nombre;
+    }
+
+    @Override
+    public String toString() {
+        return id + "|" + nombre;
+    }
 }

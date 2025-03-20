@@ -1,35 +1,61 @@
 package modelo;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "IPS")
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name="IPS")
 public class Ips {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer idIPS;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
     private String nombre;
-    private String NIT;
     private String direccion;
-    private Integer telefono;
 
-    // Relación con Médicos (Una IPS tiene muchos médicos)
-    @OneToMany(mappedBy = "ips", cascade = CascadeType.ALL)
-    private List<Medico> medicos;
+    // Podrías añadir un campo para la EPS (fk) si deseas
+    // @ManyToOne
+    // private Eps eps;
 
-    // Relación con Servicios de Salud (Una IPS presta muchos servicios)
-    @ManyToMany
-    @JoinTable(
-        name = "IPS_SERVICIO_SALUD",
-        joinColumns = @JoinColumn(name = "idIPS"),
-        inverseJoinColumns = @JoinColumn(name = "idServicio")
-    )
-    private List<ServicioDeSalud> servicios;
+    public Ips() {
+        // Constructor por defecto
+    }
+
+    public Ips(String nombre, String direccion) {
+        this.nombre = nombre;
+        this.direccion = direccion;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNombre(){
+        return nombre;
+    }
+
+    public void setNombre(String nombre){
+        this.nombre = nombre;
+    }
+
+    public String getDireccion(){
+        return direccion;
+    }
+
+    public void setDireccion(String direccion){
+        this.direccion = direccion;
+    }
+
+    @Override
+    public String toString() {
+        return nombre + "|" + direccion;
+    }
 }

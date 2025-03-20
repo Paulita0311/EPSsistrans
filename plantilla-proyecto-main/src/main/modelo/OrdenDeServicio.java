@@ -1,25 +1,78 @@
-package co.edu.uniandes.dse.olimpiadasandinas.entities;
+package modelo;
 
-import java.util.Date;
+import java.sql.Date;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-
-@Data
 @Entity
-@EqualsAndHashCode(callSuper = true)
-public class OrdenDeServicio extends BaseEntity {
+@Table(name="ORDEN_BASE")
+public class OrdenDeServicio {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
     private Date fechaEmision;
-    private String estado; 
+    private Integer idAfiliado;   // o relacion Afiliado
+    private Integer idMedico;     // o relacion Medico
+    private Integer idServicio;   // o relacion ServicioSalud
 
-    @ManyToOne
-    private AfiliadoEntity afiliado;
+    public OrdenDeServicio() {
+        // Constructor por defecto
+    }
 
-    @ManyToOne
-    private MedicoEntity medico;
+    public OrdenDeServicio(Date fechaEmision, Integer idAfiliado, Integer idMedico, Integer idServicio) {
+        this.fechaEmision = fechaEmision;
+        this.idAfiliado = idAfiliado;
+        this.idMedico = idMedico;
+        this.idServicio = idServicio;
+    }
 
- 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public Integer getIdAfiliado() {
+        return idAfiliado;
+    }
+
+    public void setIdAfiliado(Integer idAfiliado) {
+        this.idAfiliado = idAfiliado;
+    }
+
+    public Integer getIdMedico() {
+        return idMedico;
+    }
+
+    public void setIdMedico(Integer idMedico) {
+        this.idMedico = idMedico;
+    }
+
+    public Integer getIdServicio() {
+        return idServicio;
+    }
+
+    public void setIdServicio(Integer idServicio) {
+        this.idServicio = idServicio;
+    }
+
+    @Override
+    public String toString() {
+        return fechaEmision + "|" + idAfiliado + "|" + idMedico + "|" + idServicio;
+    }
 }

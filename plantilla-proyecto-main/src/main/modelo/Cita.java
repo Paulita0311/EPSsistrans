@@ -1,35 +1,58 @@
 package modelo;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import java.sql.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "CITA")
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name="CITA_BASE")
 public class Cita {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer idCita;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
-    private LocalDateTime fecha;
-    private String estado;
+    private Date fechaCita;
+    private String horaCita;
 
-    // Relación con Afiliado (Cada cita es para un solo afiliado)
-    @ManyToOne
-    @JoinColumn(name = "idAfiliado")
-    private Afiliado afiliado;
+    public Cita() {
+        // Constructor por defecto
+    }
 
-    // Relación con Médico (Cada cita es atendida por un médico)
-    @ManyToOne
-    @JoinColumn(name = "idMedico")
-    private Medico medico;
+    public Cita(Date fechaCita, String horaCita) {
+        this.fechaCita = fechaCita;
+        this.horaCita = horaCita;
+    }
 
-    // Relación con IPS (Cada cita se atiende en una IPS)
-    @ManyToOne
-    @JoinColumn(name = "idIPS")
-    private Ips ips;
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Date getFechaCita() {
+        return fechaCita;
+    }
+
+    public void setFechaCita(Date fechaCita) {
+        this.fechaCita = fechaCita;
+    }
+
+    public String getHoraCita() {
+        return horaCita;
+    }
+
+    public void setHoraCita(String horaCita) {
+        this.horaCita = horaCita;
+    }
+
+    @Override
+    public String toString() {
+        return fechaCita + "|" + horaCita;
+    }
 }

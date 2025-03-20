@@ -1,29 +1,47 @@
 package modelo;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "SERVICIO_SALUD")
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name="SERVICIO_SALUD")
 public class ServicioDeSalud {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer idServicio;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
-    private String nombreServicio;
     private String descripcion;
-    private String requisitos;
 
-    // Relación con IPS (Un servicio puede ser prestado por varias IPS)
-    @ManyToMany(mappedBy = "servicios")
-    private List<Ips> ips;
+    public ServicioDeSalud(){
+        // Constructor por defecto
+    }
 
-    // Relación con Órdenes de Servicio (Un servicio puede estar en varias órdenes)
-    @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL)
-    private List<OrdenDeServicio> ordenes;
+    public ServicioDeSalud(String descripcion){
+        this.descripcion = descripcion;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id){
+        this.id = id;
+    }
+
+    public String getDescripcion(){
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion){
+        this.descripcion = descripcion;
+    }
+
+    @Override
+    public String toString(){
+        return id + "|" + descripcion;
+    }
 }

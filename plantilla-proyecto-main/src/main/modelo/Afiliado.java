@@ -1,21 +1,68 @@
-package co.edu.uniandes.dse.olimpiadasandinas.entities;
+package modelo;
 
-import java.util.Date;
+import java.sql.Date;
 import jakarta.persistence.Entity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Data
 @Entity
-@EqualsAndHashCode(callSuper = true)
-public class Afiliado extends BaseEntity {
+@Table(name="AFILIADO")
+public class Afiliado {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
     private String nombre;
-    private String tipoDocumento;    
-    private String numeroDocumento;
     private Date fechaNacimiento;
-    private String direccion;
-    private String telefono;
-    private String parentesco;         
-    private String tipoAfiliado;       
+    private String tipoAfiliacion; // "Contributivo" o "Beneficiario"
+
+    public Afiliado() {
+        // Constructor por defecto
+    }
+
+    public Afiliado(String nombre, Date fechaNacimiento, String tipoAfiliacion) {
+        this.nombre = nombre;
+        this.fechaNacimiento = fechaNacimiento;
+        this.tipoAfiliacion = tipoAfiliacion;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre){
+        this.nombre = nombre;
+    }
+
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento){
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getTipoAfiliacion() {
+        return tipoAfiliacion;
+    }
+
+    public void setTipoAfiliacion(String tipoAfiliacion){
+        this.tipoAfiliacion = tipoAfiliacion;
+    }
+
+    @Override
+    public String toString() {
+        return nombre + "|" + fechaNacimiento + "|" + tipoAfiliacion;
+    }
 }

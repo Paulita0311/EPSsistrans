@@ -1,21 +1,57 @@
-package co.edu.uniandes.dse.olimpiadasandinas.entities;
+package modelo;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-
-@Data
 @Entity
-@EqualsAndHashCode(callSuper = true)
-public class Medico extends BaseEntity {
+@Table(name="MEDICO")
+public class Medico {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
     private String nombre;
-    private String tipoDocumento;   // p.ej. "CC"
-    private String numeroDocumento;
+    private String registro;
 
-    // Relación opcional con Especialidad, si tu modelo lo define:
-    @ManyToOne
-    private EspecialidadEntity especialidad;
+    public Medico() {
+        // Constructor por defecto
+    }
+
+    public Medico(String nombre, String registro) {
+        this.nombre = nombre;
+        this.registro = registro;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNombre(){
+        return nombre;
+    }
+
+    public void setNombre(String nombre){
+        this.nombre = nombre;
+    }
+
+    public String getRegistro(){
+        return registro;
+    }
+
+    public void setRegistro(String registro){
+        this.registro = registro;
+    }
+
+    @Override
+    public String toString() {
+        return nombre + "|" + registro;
+    }
 }

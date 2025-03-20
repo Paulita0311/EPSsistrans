@@ -1,41 +1,57 @@
 package modelo;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "ATENCION_MEDICA")
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name="ATENCION_MEDICA")
 public class AtencionMedica {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer idAtencion;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
-    private LocalDateTime fecha;
-    private String receta;
     private String diagnostico;
+    private String resultados;
 
-    // Relación con Afiliado (Cada atención médica es para un afiliado)
-    @ManyToOne
-    @JoinColumn(name = "idAfiliado")
-    private Afiliado afiliado;
+    public AtencionMedica() {
+        // Constructor por defecto
+    }
 
-    // Relación con Médico (Cada atención médica es realizada por un médico)
-    @ManyToOne
-    @JoinColumn(name = "idMedico")
-    private Medico medico;
+    public AtencionMedica(String diagnostico, String resultados) {
+        this.diagnostico = diagnostico;
+        this.resultados = resultados;
+    }
 
-    // Relación con IPS (Cada atención médica ocurre en una IPS)
-    @ManyToOne
-    @JoinColumn(name = "idIPS")
-    private Ips ips;
+    public Integer getId() {
+        return id;
+    }
 
-    // Relación con Servicio de Salud (Cada atención médica corresponde a un servicio)
-    @ManyToOne
-    @JoinColumn(name = "idServicioSalud")
-    private ServicioDeSalud servicio;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDiagnostico() {
+        return diagnostico;
+    }
+
+    public void setDiagnostico(String diagnostico) {
+        this.diagnostico = diagnostico;
+    }
+
+    public String getResultados() {
+        return resultados;
+    }
+
+    public void setResultados(String resultados) {
+        this.resultados = resultados;
+    }
+
+    @Override
+    public String toString() {
+        return diagnostico + "|" + resultados;
+    }
 }
